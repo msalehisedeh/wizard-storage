@@ -1,0 +1,20 @@
+.logger {
+    border: 1px solid #633;
+    background-color: #fefefe;
+    box-sizing: border-box;
+    display: block;
+    min-height: 222px;
+    overflow-y: auto;
+    position: relative;
+  
+    font-family: monospace;
+    float: left;
+    padding: 5px;
+    unicode-bidi: embed;
+    width: 100%;
+    white-space: pre-wrap;
+    border-radius: 0 0 0 5px;
+}
+ul {
+    margin: 0;
+}
