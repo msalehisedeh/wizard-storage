@@ -1,13 +1,17 @@
 {
   "name": "wizard-storage",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "license": "MIT",
   "private": false,
   "keywords": [
     "angular 6+",
-    "web-storage",
+    "webStorage",
+    "web storage",
+    "smart storage",
+    "localStorage",
     "local storage",
-    "session storage"
+    "session storage",
+    "sessionStorage"
   ],
   "dependencies": {
     "@angular/common": "^6.0.0",

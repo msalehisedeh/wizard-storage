@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Injectable, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Injectable, Directive, Output, HostListener, EventEmitter, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 /**
  * @fileoverview added by tsickle
@@ -173,12 +173,68 @@ WizardStorageService.ctorParameters = () => [];
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
+class WizardStorageDirective {
+    /**
+     * @param {?} wizardService
+     */
+    constructor(wizardService) {
+        this.wizardService = wizardService;
+        this.wizardStorage = new EventEmitter();
+    }
+    /**
+     * @param {?} event
+     * @return {?}
+     */
+    onHover(event) {
+        this.wizardStorage.emit({
+            key: event.key,
+            oldValue: this.toJson(event.oldValue),
+            newValue: this.toJson(event.newValue),
+            url: event.url
+        });
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    toJson(value) {
+        /** @type {?} */
+        let x = value;
+        try {
+            x = JSON.parse(value);
+        }
+        catch (e) { }
+        return x;
+    }
+}
+WizardStorageDirective.decorators = [
+    { type: Directive, args: [{
+                selector: '[wizardStorage]'
+            },] }
+];
+/** @nocollapse */
+WizardStorageDirective.ctorParameters = () => [
+    { type: WizardStorageService }
+];
+WizardStorageDirective.propDecorators = {
+    onHover: [{ type: HostListener, args: ['window:storage', ['$event'],] }],
+    wizardStorage: [{ type: Output }]
+};
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ */
 class WizardStorageModule {
 }
 WizardStorageModule.decorators = [
     { type: NgModule, args: [{
-                declarations: [],
-                exports: [],
+                declarations: [
+                    WizardStorageDirective
+                ],
+                exports: [
+                    WizardStorageDirective
+                ],
                 imports: [
                     CommonModule
                 ],
@@ -199,6 +255,6 @@ WizardStorageModule.decorators = [
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 
-export { WizardStorageModule, WizardStorageService as ɵa };
+export { WizardStorageModule, WizardStorageDirective as ɵa, WizardStorageService as ɵb };
 
 //# sourceMappingURL=wizard-storage.js.map

@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/common'), require('@angular/core'), require('rxjs')) :
-    typeof define === 'function' && define.amd ? define('wizard-storage', ['exports', '@angular/common', '@angular/core', 'rxjs'], factory) :
-    (factory((global['wizard-storage'] = {}),global.ng.common,global.ng.core,global.rxjs));
-}(this, (function (exports,common,core,rxjs) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/common'), require('rxjs'), require('@angular/core')) :
+    typeof define === 'function' && define.amd ? define('wizard-storage', ['exports', '@angular/common', 'rxjs', '@angular/core'], factory) :
+    (factory((global['wizard-storage'] = {}),global.ng.common,global.rxjs,global.ng.core));
+}(this, (function (exports,common,rxjs,core) { 'use strict';
 
     /**
      * @fileoverview added by tsickle
@@ -204,13 +204,79 @@
      * @fileoverview added by tsickle
      * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
      */
+    var WizardStorageDirective = (function () {
+        function WizardStorageDirective(wizardService) {
+            this.wizardService = wizardService;
+            this.wizardStorage = new core.EventEmitter();
+        }
+        // Will listen to localStorage changes made
+        // by other applications.
+        /**
+         * @param {?} event
+         * @return {?}
+         */
+        WizardStorageDirective.prototype.onHover = /**
+         * @param {?} event
+         * @return {?}
+         */
+            function (event) {
+                this.wizardStorage.emit({
+                    key: event.key,
+                    oldValue: this.toJson(event.oldValue),
+                    newValue: this.toJson(event.newValue),
+                    url: event.url
+                });
+            };
+        /**
+         * @param {?} value
+         * @return {?}
+         */
+        WizardStorageDirective.prototype.toJson = /**
+         * @param {?} value
+         * @return {?}
+         */
+            function (value) {
+                /** @type {?} */
+                var x = value;
+                try {
+                    x = JSON.parse(value);
+                }
+                catch (e) { }
+                return x;
+            };
+        WizardStorageDirective.decorators = [
+            { type: core.Directive, args: [{
+                        selector: '[wizardStorage]'
+                    },] }
+        ];
+        /** @nocollapse */
+        WizardStorageDirective.ctorParameters = function () {
+            return [
+                { type: WizardStorageService }
+            ];
+        };
+        WizardStorageDirective.propDecorators = {
+            onHover: [{ type: core.HostListener, args: ['window:storage', ['$event'],] }],
+            wizardStorage: [{ type: core.Output }]
+        };
+        return WizardStorageDirective;
+    }());
+
+    /**
+     * @fileoverview added by tsickle
+     * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+     */
     var WizardStorageModule = (function () {
         function WizardStorageModule() {
         }
         WizardStorageModule.decorators = [
             { type: core.NgModule, args: [{
-                        declarations: [],
-                        exports: [],
+                        declarations: [
+                            WizardStorageDirective
+                        ],
+                        exports: [
+                            WizardStorageDirective
+                        ],
                         imports: [
                             common.CommonModule
                         ],
@@ -234,7 +300,8 @@
      */
 
     exports.WizardStorageModule = WizardStorageModule;
-    exports.ɵa = WizardStorageService;
+    exports.ɵa = WizardStorageDirective;
+    exports.ɵb = WizardStorageService;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

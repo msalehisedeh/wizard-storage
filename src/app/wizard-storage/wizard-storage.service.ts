@@ -111,6 +111,7 @@ export class WizardStorageService {
     }
 
     constructor() {
+
         this.session = new Object();
         this.session.isSupported = () => {return this.isSupported(sessionStorage)};
         this.session.onchange = (key: string) => {return this.onChange(key, 'session')}

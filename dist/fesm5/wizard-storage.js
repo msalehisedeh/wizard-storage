@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Injectable, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Injectable, Directive, Output, HostListener, EventEmitter, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 /**
  * @fileoverview added by tsickle
@@ -202,13 +202,77 @@ var WizardStorageService = /** @class */ (function () {
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
+var WizardStorageDirective = /** @class */ (function () {
+    function WizardStorageDirective(wizardService) {
+        this.wizardService = wizardService;
+        this.wizardStorage = new EventEmitter();
+    }
+    // Will listen to localStorage changes made
+    // by other applications.
+    /**
+     * @param {?} event
+     * @return {?}
+     */
+    WizardStorageDirective.prototype.onHover = /**
+     * @param {?} event
+     * @return {?}
+     */
+    function (event) {
+        this.wizardStorage.emit({
+            key: event.key,
+            oldValue: this.toJson(event.oldValue),
+            newValue: this.toJson(event.newValue),
+            url: event.url
+        });
+    };
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    WizardStorageDirective.prototype.toJson = /**
+     * @param {?} value
+     * @return {?}
+     */
+    function (value) {
+        /** @type {?} */
+        var x = value;
+        try {
+            x = JSON.parse(value);
+        }
+        catch (e) { }
+        return x;
+    };
+    WizardStorageDirective.decorators = [
+        { type: Directive, args: [{
+                    selector: '[wizardStorage]'
+                },] }
+    ];
+    /** @nocollapse */
+    WizardStorageDirective.ctorParameters = function () { return [
+        { type: WizardStorageService }
+    ]; };
+    WizardStorageDirective.propDecorators = {
+        onHover: [{ type: HostListener, args: ['window:storage', ['$event'],] }],
+        wizardStorage: [{ type: Output }]
+    };
+    return WizardStorageDirective;
+}());
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ */
 var WizardStorageModule = /** @class */ (function () {
     function WizardStorageModule() {
     }
     WizardStorageModule.decorators = [
         { type: NgModule, args: [{
-                    declarations: [],
-                    exports: [],
+                    declarations: [
+                        WizardStorageDirective
+                    ],
+                    exports: [
+                        WizardStorageDirective
+                    ],
                     imports: [
                         CommonModule
                     ],
@@ -231,6 +295,6 @@ var WizardStorageModule = /** @class */ (function () {
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 
-export { WizardStorageModule, WizardStorageService as ɵa };
+export { WizardStorageModule, WizardStorageDirective as ɵa, WizardStorageService as ɵb };
 
 //# sourceMappingURL=wizard-storage.js.map

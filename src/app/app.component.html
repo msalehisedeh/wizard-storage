@@ -5,9 +5,15 @@
   </h1>
 </div>
 
-<div class="logger">
+<div class="action">
+    <p>Run two instances of this example. click on "Trigger Storage" button 
+        of one instance and see the result on the second instance</p>
+    <button (click)="makeStorage()">Trigger Storage</button>
+    <button (click)="logger = []">Clear Logger</button>
+</div>
+<div class="logger" (wizardStorage)="storageChanged($event)">
   <ul>
-    <li *ngFor="let t of logger" [innerHTML]="t"></li>
+    <li *ngFor="let t of logger"><span [innerHTML]="t.message"></span><span class="json" [innerHTML]="t.value | json"></span></li>
   </ul>
 </div>
 
