@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/common'), require('rxjs'), require('@angular/core')) :
-    typeof define === 'function' && define.amd ? define('wizard-storage', ['exports', '@angular/common', 'rxjs', '@angular/core'], factory) :
-    (factory((global['wizard-storage'] = {}),global.ng.common,global.rxjs,global.ng.core));
-}(this, (function (exports,common,rxjs,core) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('rxjs'), require('@angular/core'), require('@angular/common')) :
+    typeof define === 'function' && define.amd ? define('wizard-storage', ['exports', 'rxjs', '@angular/core', '@angular/common'], factory) :
+    (factory((global['wizard-storage'] = {}),global.rxjs,global.ng.core,global.ng.common));
+}(this, (function (exports,rxjs,core,common) { 'use strict';
 
     /**
      * @fileoverview added by tsickle
@@ -299,9 +299,9 @@
      * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
      */
 
+    exports.WizardStorageService = WizardStorageService;
+    exports.WizardStorageDirective = WizardStorageDirective;
     exports.WizardStorageModule = WizardStorageModule;
-    exports.ɵa = WizardStorageDirective;
-    exports.ɵb = WizardStorageService;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

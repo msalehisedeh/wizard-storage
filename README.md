@@ -81,7 +81,10 @@ session.clear()
 
 ## Releases
 
-### version 1.1.0
+### version 1.1.2
+I was getting a compiler error on stackblitz. dropped my node_modules and recompiled. found i had forgotten to export directive. also noticed my local application was having problem when using angular 5 since i am comiling this tool in angular 6.
+
+### version 1.1.1
 documentation update
 
 ### version 1.1.0

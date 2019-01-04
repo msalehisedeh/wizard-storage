@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 import { Injectable, Directive, Output, HostListener, EventEmitter, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 /**
  * @fileoverview added by tsickle
@@ -295,6 +295,6 @@ var WizardStorageModule = /** @class */ (function () {
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 
-export { WizardStorageModule, WizardStorageDirective as ɵa, WizardStorageService as ɵb };
+export { WizardStorageService, WizardStorageDirective, WizardStorageModule };
 
 //# sourceMappingURL=wizard-storage.js.map
