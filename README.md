@@ -27,6 +27,7 @@ constructor(private storage:WizardStorageService){}
 // return true if storage is supported by the browser
 storage.local.isSupported() 
 storage.session.isSupported() 
+storage.cookies.isSupported() 
 
 // returns an observer to subscribe to.
 // To listen to storage change internally by other
@@ -35,6 +36,7 @@ storage.local.onchange(
     key // key to keep a reference
 )
 storage.session.onchange(key) 
+storage.cookies.onchange(key) 
 
 // sets the value of key in storage tied up with 
 // expiration and or version number if supplied.
@@ -45,6 +47,7 @@ storage.local.setItem(
     expires // optional in hours
 ) 
 storage.session.setItem(key, value, version, expires)
+storage.cookies.setItem(key, value, expires, domain, path, isSecure)
 
 // returns the value if not expired 
 // and if matches the version number
@@ -90,6 +93,9 @@ storage.session.clear()
 ```
 
 ## Releases
+
+### version 1.2.1
+documentation update
 
 ### version 1.2.0
 Added cookies API to make this tool a bit sweeter ;-).
