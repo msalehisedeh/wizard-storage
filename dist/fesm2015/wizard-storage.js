@@ -10,7 +10,8 @@ class WizardStorageService {
     constructor() {
         this.subjects = {
             local: {},
-            session: {}
+            session: {},
+            cookies: {}
         };
         this.session = new Object();
         this.session.isSupported = () => { return this.isSupported(sessionStorage); };
@@ -34,6 +35,72 @@ class WizardStorageService {
         this.local.removeItem = (key) => { localStorage.removeItem(key); };
         this.local.getAllKeys = () => { return this.getAllKeys(localStorage); };
         this.local.clear = () => { localStorage.clear(); };
+        this.cookies = new Object();
+        this.cookies.isSupported = () => { return true; };
+        this.cookies.onchange = (key) => { return this.onChange(key, 'cookies'); };
+        this.cookies.setItem = (key, value, expires, domain, path, isSecure) => {
+            if (!key || /^(?:expires|max\-age|path|domain|secure)$/i.test(key)) {
+                return false;
+            }
+            /** @type {?} */
+            let willExpires = "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+            if (expires) {
+                willExpires = "; max-age=" + (expires * 3600000);
+            }
+            if (this.subjects.cookies[key]) {
+                this.subjects.cookies[key].next({
+                    key: key,
+                    oldValue: this.cookies.getItem(key),
+                    newValue: value,
+                    url: document.location.href
+                });
+            }
+            if (typeof value === 'object') {
+                value = JSON.stringify(value);
+            }
+            document.cookie = encodeURIComponent(key) + "=" +
+                encodeURIComponent(value) +
+                willExpires + (domain ? "; domain=" + domain : "") +
+                (path ? "; path=" + path : "") +
+                (isSecure ? "; secure" : "");
+            return true;
+        };
+        this.cookies.getItem = (key) => {
+            /** @type {?} */
+            const result = decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" +
+                encodeURIComponent(key).replace(/[\-\.\+\*]/g, "\\$&") +
+                "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+            return this.toJson(result);
+        };
+        this.cookies.hasItem = (key) => {
+            return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(key).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+        };
+        this.cookies.removeItem = (key, path, domain) => {
+            if (!key || !this.cookies.hasItem(key)) {
+                return false;
+            }
+            if (this.subjects.cookies[key]) {
+                this.subjects.cookies[key].next({
+                    key: key,
+                    oldValue: this.cookies.getItem(key),
+                    newValue: null,
+                    url: document.location.href
+                });
+            }
+            document.cookie = encodeURIComponent(key) +
+                "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" +
+                (domain ? "; domain=" + domain : "") +
+                (path ? "; path=" + path : "");
+            return true;
+        };
+        this.cookies.getAllKeys = () => {
+            /** @type {?} */
+            var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+            for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
+                aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]);
+            }
+            return aKeys;
+        };
     }
     /**
      * @param {?} storage
@@ -98,8 +165,9 @@ class WizardStorageService {
                 if (this.subjects[store][key]) {
                     this.subjects[store][key].next({
                         key: key,
-                        oldValue: result,
-                        newValue: null
+                        oldValue: content,
+                        newValue: null,
+                        url: document.location.href
                     });
                 }
                 storage.removeItem(key);
@@ -134,7 +202,8 @@ class WizardStorageService {
             this.subjects[store][key].next({
                 key: key,
                 oldValue: storage.getItem(key),
-                newValue: value
+                newValue: content,
+                url: document.location.href
             });
         }
         storage.setItem(key, JSON.stringify(content));
@@ -162,6 +231,19 @@ class WizardStorageService {
         }
         return this.subjects[storage][key];
     }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    toJson(value) {
+        /** @type {?} */
+        let x = value;
+        try {
+            x = JSON.parse(value);
+        }
+        catch (e) { }
+        return x;
+    }
 }
 WizardStorageService.decorators = [
     { type: Injectable }
@@ -188,23 +270,10 @@ class WizardStorageDirective {
     onHover(event) {
         this.wizardStorage.emit({
             key: event.key,
-            oldValue: this.toJson(event.oldValue),
-            newValue: this.toJson(event.newValue),
+            oldValue: this.wizardService.toJson(event.oldValue),
+            newValue: this.wizardService.toJson(event.newValue),
             url: event.url
         });
-    }
-    /**
-     * @param {?} value
-     * @return {?}
-     */
-    toJson(value) {
-        /** @type {?} */
-        let x = value;
-        try {
-            x = JSON.parse(value);
-        }
-        catch (e) { }
-        return x;
     }
 }
 WizardStorageDirective.decorators = [

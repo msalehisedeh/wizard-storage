@@ -4,6 +4,5 @@ export declare class WizardStorageDirective {
     private wizardService;
     onHover(event: any): void;
     wizardStorage: EventEmitter<any>;
-    private toJson(value);
     constructor(wizardService: WizardStorageService);
 }

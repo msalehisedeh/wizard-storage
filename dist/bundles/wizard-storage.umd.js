@@ -13,7 +13,8 @@
             var _this = this;
             this.subjects = {
                 local: {},
-                session: {}
+                session: {},
+                cookies: {}
             };
             this.session = new Object();
             this.session.isSupported = function () { return _this.isSupported(sessionStorage); };
@@ -37,6 +38,72 @@
             this.local.removeItem = function (key) { localStorage.removeItem(key); };
             this.local.getAllKeys = function () { return _this.getAllKeys(localStorage); };
             this.local.clear = function () { localStorage.clear(); };
+            this.cookies = new Object();
+            this.cookies.isSupported = function () { return true; };
+            this.cookies.onchange = function (key) { return _this.onChange(key, 'cookies'); };
+            this.cookies.setItem = function (key, value, expires, domain, path, isSecure) {
+                if (!key || /^(?:expires|max\-age|path|domain|secure)$/i.test(key)) {
+                    return false;
+                }
+                /** @type {?} */
+                var willExpires = "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                if (expires) {
+                    willExpires = "; max-age=" + (expires * 3600000);
+                }
+                if (_this.subjects.cookies[key]) {
+                    _this.subjects.cookies[key].next({
+                        key: key,
+                        oldValue: _this.cookies.getItem(key),
+                        newValue: value,
+                        url: document.location.href
+                    });
+                }
+                if (typeof value === 'object') {
+                    value = JSON.stringify(value);
+                }
+                document.cookie = encodeURIComponent(key) + "=" +
+                    encodeURIComponent(value) +
+                    willExpires + (domain ? "; domain=" + domain : "") +
+                    (path ? "; path=" + path : "") +
+                    (isSecure ? "; secure" : "");
+                return true;
+            };
+            this.cookies.getItem = function (key) {
+                /** @type {?} */
+                var result = decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" +
+                    encodeURIComponent(key).replace(/[\-\.\+\*]/g, "\\$&") +
+                    "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+                return _this.toJson(result);
+            };
+            this.cookies.hasItem = function (key) {
+                return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(key).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+            };
+            this.cookies.removeItem = function (key, path, domain) {
+                if (!key || !_this.cookies.hasItem(key)) {
+                    return false;
+                }
+                if (_this.subjects.cookies[key]) {
+                    _this.subjects.cookies[key].next({
+                        key: key,
+                        oldValue: _this.cookies.getItem(key),
+                        newValue: null,
+                        url: document.location.href
+                    });
+                }
+                document.cookie = encodeURIComponent(key) +
+                    "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" +
+                    (domain ? "; domain=" + domain : "") +
+                    (path ? "; path=" + path : "");
+                return true;
+            };
+            this.cookies.getAllKeys = function () {
+                /** @type {?} */
+                var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+                for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
+                    aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]);
+                }
+                return aKeys;
+            };
         }
         /**
          * @param {?} storage
@@ -111,8 +178,9 @@
                         if (this.subjects[store][key]) {
                             this.subjects[store][key].next({
                                 key: key,
-                                oldValue: result,
-                                newValue: null
+                                oldValue: content,
+                                newValue: null,
+                                url: document.location.href
                             });
                         }
                         storage.removeItem(key);
@@ -155,7 +223,8 @@
                     this.subjects[store][key].next({
                         key: key,
                         oldValue: storage.getItem(key),
-                        newValue: value
+                        newValue: content,
+                        url: document.location.href
                     });
                 }
                 storage.setItem(key, JSON.stringify(content));
@@ -192,6 +261,23 @@
                 }
                 return this.subjects[storage][key];
             };
+        /**
+         * @param {?} value
+         * @return {?}
+         */
+        WizardStorageService.prototype.toJson = /**
+         * @param {?} value
+         * @return {?}
+         */
+            function (value) {
+                /** @type {?} */
+                var x = value;
+                try {
+                    x = JSON.parse(value);
+                }
+                catch (e) { }
+                return x;
+            };
         WizardStorageService.decorators = [
             { type: core.Injectable }
         ];
@@ -222,27 +308,10 @@
             function (event) {
                 this.wizardStorage.emit({
                     key: event.key,
-                    oldValue: this.toJson(event.oldValue),
-                    newValue: this.toJson(event.newValue),
+                    oldValue: this.wizardService.toJson(event.oldValue),
+                    newValue: this.wizardService.toJson(event.newValue),
                     url: event.url
                 });
-            };
-        /**
-         * @param {?} value
-         * @return {?}
-         */
-        WizardStorageDirective.prototype.toJson = /**
-         * @param {?} value
-         * @return {?}
-         */
-            function (value) {
-                /** @type {?} */
-                var x = value;
-                try {
-                    x = JSON.parse(value);
-                }
-                catch (e) { }
-                return x;
             };
         WizardStorageDirective.decorators = [
             { type: core.Directive, args: [{

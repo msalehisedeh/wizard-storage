@@ -1,6 +1,7 @@
 export declare class WizardStorageService {
     local: any;
     session: any;
+    cookies: any;
     private subjects;
     private isSupported(storage);
     private getItem(store, key, version?);
@@ -8,4 +9,5 @@ export declare class WizardStorageService {
     private getAllKeys(storage);
     private onChange(key, storage);
     constructor();
+    toJson(value: any): any;
 }

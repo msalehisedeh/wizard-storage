@@ -19,8 +19,8 @@ export class WizardStorageDirective {
     onHover(event: any) {
         this.wizardStorage.emit({
             key: event.key,
-            oldValue: this.toJson(event.oldValue),
-            newValue: this.toJson(event.newValue),
+            oldValue: this.wizardService.toJson(event.oldValue),
+            newValue: this.wizardService.toJson(event.newValue),
             url: event.url
         });
     }
@@ -28,13 +28,6 @@ export class WizardStorageDirective {
     @Output()
     wizardStorage: EventEmitter<any> = new EventEmitter();
 
-    private toJson(value: any) {
-        let x = value;
-        try {
-            x = JSON.parse(value);
-        }catch(e){}
-        return x;
-    }
     constructor(
         private wizardService: WizardStorageService
     ) {

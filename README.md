@@ -22,64 +22,78 @@ You can use this wizard to listen to changing of a specific key you have stored 
 ### Methods and arguments
 
 ```javascript
+constructor(private storage:WizardStorageService){}
+
 // return true if storage is supported by the browser
-local.isSupported() 
-session.isSupported() 
+storage.local.isSupported() 
+storage.session.isSupported() 
 
 // returns an observer to subscribe to.
 // To listen to storage change internally by other
 // parts of your application, use this method.
-local.onchange(
+storage.local.onchange(
     key // key to keep a reference
 )
-session.onchange(key) 
+storage.session.onchange(key) 
 
 // sets the value of key in storage tied up with 
 // expiration and or version number if supplied.
-local.setItem(
+storage.local.setItem(
     key     // key to keep a reference
     value   // value to be stored
     version // optional version number
     expires // optional in hours
 ) 
-session.setItem(key, value, version, expires)
+storage.session.setItem(key, value, version, expires)
 
 // returns the value if not expired 
 // and if matches the version number
-local.getItem(
+storage.local.getItem(
     key     // key to keep a reference
     version // optional version number
 )
-session.getItem(key, version)
+storage.session.getItem(key, version)
+storage.cookies.getItem(key, version)
 
 // returns true if key exists in storage
-local.hasItem(
+storage.local.hasItem(
     key     // key to keep a reference
 )
-session.hasItem(key)
+storage.session.hasItem(key)
+storage.cookies.hasItem(key)
 
 // removed the item from storage
-local.removeItem(
+storage.local.removeItem(
     key     // key to keep a reference
 )
-session.removeItem(key)
+storage.session.removeItem(key)
+storage.cookies.removeItem(
+    key
+    path
+    domain
+)
 
 // returns a list of all keys in the storage
-local.getAllKeys()
-session.getAllKeys()
+storage.local.getAllKeys()
+storage.session.getAllKeys()
+storage.cookies.getAllKeys()
 
 // clears the entire storage. Be careful with this
 // as other keys you are not aware of may be 
 // created by other applications in local storage.
-local.clear()
+storage.local.clear()
 
 // clearing session storage is OK as it contains
 // keys stored only by your application.
-session.clear()
+storage.session.clear()
 
 ```
 
 ## Releases
+
+### version 1.2.0
+Added cookies API to make this tool a bit sweeter ;-).
+When listening to localStorage event raised by other applications, the event has url attribute and contains detailed information about an entry exactly as it was added into the storage. Modified code to pass url attribute and detailed value to the onchange observer.
 
 ### version 1.1.2
 I was getting a compiler error on stackblitz. dropped my node_modules and recompiled. found i had forgotten to export directive. also noticed my local application was having problem when using angular 5 since i am comiling this tool in angular 6.

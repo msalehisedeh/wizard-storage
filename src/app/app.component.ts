@@ -14,6 +14,21 @@ export class AppComponent {
   constructor(private storage:WizardStorageService) {}
 
   makeStorage() {
+    this.logger.push({message: "==== COOKIES STORAGE ===="});
+    this.logger.push({message: "'cookie 1' removed: ", value: this.storage.cookies.removeItem("cookie 1")});
+    this.logger.push({message: "'cookie 1' removed: ", value: this.storage.cookies.removeItem("cookie 1")});
+    this.storage.cookies.onchange('cookie 1').subscribe(
+      (success) => {
+        if (success) {
+          this.logger.push({message: "key 'cookie 1' changed: ", value: success });
+        }
+      }
+    );
+    this.storage.cookies.setItem("cookie 1", {v: 3, k: 'uyu'});
+
+    this.logger.push({message: "'cookie 1' value is: ", value: this.storage.cookies.getItem('cookie 1')});
+    this.logger.push({message: "all keys are: ", value: this.storage.cookies.getAllKeys()});
+
     this.logger.push({message: "==== SESSION STORAGE ===="});
 
     this.storage.session.setItem("oneHourExpire", 5467, '12.4.3', 1);
