@@ -22,7 +22,19 @@ var WizardStorageService = /** @class */ (function () {
         };
         this.session.getItem = function (key, version) { return _this.getItem('session', key, version); };
         this.session.hasItem = function (key) { return sessionStorage.getItem(key) !== null; };
-        this.session.removeItem = function (key) { sessionStorage.removeItem(key); };
+        this.session.removeItem = function (key) {
+            /** @type {?} */
+            var oldV = _this.subjects.session[key] ? _this.session.getItem(key) : undefined;
+            sessionStorage.removeItem(key);
+            if (_this.subjects.session[key]) {
+                _this.subjects.session[key].next({
+                    key: key,
+                    oldValue: oldV,
+                    newValue: null,
+                    url: document.location.href
+                });
+            }
+        };
         this.session.getAllKeys = function () { return _this.getAllKeys(sessionStorage); };
         this.session.clear = function () { sessionStorage.clear(); };
         this.local = new Object();
@@ -33,7 +45,19 @@ var WizardStorageService = /** @class */ (function () {
         };
         this.local.getItem = function (key, version) { return _this.getItem('local', key, version); };
         this.local.hasItem = function (key) { return localStorage.getItem(key) !== null; };
-        this.local.removeItem = function (key) { localStorage.removeItem(key); };
+        this.local.removeItem = function (key) {
+            /** @type {?} */
+            var oldV = _this.subjects.local[key] ? _this.local.getItem(key) : undefined;
+            localStorage.removeItem(key);
+            if (_this.subjects.local[key]) {
+                _this.subjects.local[key].next({
+                    key: key,
+                    oldValue: oldV,
+                    newValue: null,
+                    url: document.location.href
+                });
+            }
+        };
         this.local.getAllKeys = function () { return _this.getAllKeys(localStorage); };
         this.local.clear = function () { localStorage.clear(); };
         this.cookies = new Object();
@@ -48,22 +72,26 @@ var WizardStorageService = /** @class */ (function () {
             if (expires) {
                 willExpires = "; max-age=" + (expires * 3600000);
             }
+            /** @type {?} */
+            var oldV = _this.cookies.getItem(key);
+            /** @type {?} */
+            var zVal = value;
+            if (typeof value === 'object') {
+                zVal = JSON.stringify(value);
+            }
+            document.cookie = encodeURIComponent(key) + "=" +
+                encodeURIComponent(zVal) +
+                willExpires + (domain ? "; domain=" + domain : "") +
+                (path ? "; path=" + path : "") +
+                (isSecure ? "; secure" : "");
             if (_this.subjects.cookies[key]) {
                 _this.subjects.cookies[key].next({
                     key: key,
-                    oldValue: _this.cookies.getItem(key),
+                    oldValue: oldV,
                     newValue: value,
                     url: document.location.href
                 });
             }
-            if (typeof value === 'object') {
-                value = JSON.stringify(value);
-            }
-            document.cookie = encodeURIComponent(key) + "=" +
-                encodeURIComponent(value) +
-                willExpires + (domain ? "; domain=" + domain : "") +
-                (path ? "; path=" + path : "") +
-                (isSecure ? "; secure" : "");
             return true;
         };
         this.cookies.getItem = function (key) {
@@ -80,18 +108,20 @@ var WizardStorageService = /** @class */ (function () {
             if (!key || !_this.cookies.hasItem(key)) {
                 return false;
             }
-            if (_this.subjects.cookies[key]) {
-                _this.subjects.cookies[key].next({
-                    key: key,
-                    oldValue: _this.cookies.getItem(key),
-                    newValue: null,
-                    url: document.location.href
-                });
-            }
+            /** @type {?} */
+            var oldV = _this.subjects.cookies[key] ? _this.cookies.getItem(key) : undefined;
             document.cookie = encodeURIComponent(key) +
                 "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" +
                 (domain ? "; domain=" + domain : "") +
                 (path ? "; path=" + path : "");
+            if (_this.subjects.cookies[key]) {
+                _this.subjects.cookies[key].next({
+                    key: key,
+                    oldValue: oldV,
+                    newValue: null,
+                    url: document.location.href
+                });
+            }
             return true;
         };
         this.cookies.getAllKeys = function () {
@@ -101,6 +131,11 @@ var WizardStorageService = /** @class */ (function () {
                 aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]);
             }
             return aKeys;
+        };
+        this.cookies.clear = function () {
+            _this.cookies.getAllKeys().map(function (item) {
+                _this.cookies.removeItem(item);
+            });
         };
     }
     /**
@@ -173,6 +208,7 @@ var WizardStorageService = /** @class */ (function () {
         }
         if (result && content.expires) {
             if (new Date().getTime() >= content.expires) {
+                storage.removeItem(key);
                 if (this.subjects[store][key]) {
                     this.subjects[store][key].next({
                         key: key,
@@ -181,7 +217,6 @@ var WizardStorageService = /** @class */ (function () {
                         url: document.location.href
                     });
                 }
-                storage.removeItem(key);
                 result = undefined;
             }
         }
@@ -217,15 +252,17 @@ var WizardStorageService = /** @class */ (function () {
             d.setTime(d.getTime() + (expires * 3600000));
             content.expires = d.getTime();
         }
+        /** @type {?} */
+        var oldV = storage.getItem(key);
+        storage.setItem(key, JSON.stringify(content));
         if (this.subjects[store][key]) {
             this.subjects[store][key].next({
                 key: key,
-                oldValue: storage.getItem(key),
+                oldValue: oldV,
                 newValue: content,
                 url: document.location.href
             });
         }
-        storage.setItem(key, JSON.stringify(content));
     };
     /**
      * @param {?} storage

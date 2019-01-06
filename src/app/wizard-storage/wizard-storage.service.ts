@@ -65,6 +65,7 @@ export class WizardStorageService {
         }
         if (result && content.expires) {
             if (new Date().getTime() >= content.expires) {
+                storage.removeItem(key);
                 if (this.subjects[store][key]) {
                     this.subjects[store][key].next({
                         key: key,
@@ -73,7 +74,6 @@ export class WizardStorageService {
                         url: document.location.href
                     });
                 }
-                storage.removeItem(key);
                 result = undefined;
             }
         }
@@ -91,15 +91,16 @@ export class WizardStorageService {
             d.setTime(d.getTime() + (expires*3600000)); 
             content.expires = d.getTime();
         }
+        const oldV = storage.getItem(key);
+        storage.setItem(key, JSON.stringify(content));
         if (this.subjects[store][key]) {
             this.subjects[store][key].next({
                 key: key,
-                oldValue: storage.getItem(key),
+                oldValue: oldV,
                 newValue: content,
                 url: document.location.href
             });
         }
-        storage.setItem(key, JSON.stringify(content));
     }
     private getAllKeys(storage: any) {
         const result = [];
@@ -125,7 +126,18 @@ export class WizardStorageService {
         };
         this.session.getItem = (key: string, version?: string) => {return this.getItem('session', key, version)};
         this.session.hasItem = (key: string) => {return sessionStorage.getItem(key) !== null};
-        this.session.removeItem = (key: string) => {sessionStorage.removeItem(key)};
+        this.session.removeItem = (key: string) => {
+            const oldV = this.subjects.session[key] ? this.session.getItem(key): undefined;
+            sessionStorage.removeItem(key);
+            if (this.subjects.session[key]) {
+                this.subjects.session[key].next({
+                    key: key,
+                    oldValue: oldV,
+                    newValue: null,
+                    url: document.location.href
+                });
+            }
+        };
         this.session.getAllKeys = () => {return this.getAllKeys(sessionStorage)};
         this.session.clear = () => { sessionStorage.clear()};
 
@@ -138,7 +150,18 @@ export class WizardStorageService {
         };
         this.local.getItem = (key: string, version?: string) => {return this.getItem('local', key, version)};
         this.local.hasItem = (key: string) => {return localStorage.getItem(key) !== null};
-        this.local.removeItem = (key: string) => {localStorage.removeItem(key)};
+        this.local.removeItem = (key: string) => {
+            const oldV = this.subjects.local[key] ? this.local.getItem(key): undefined;
+            localStorage.removeItem(key)
+            if (this.subjects.local[key]) {
+                this.subjects.local[key].next({
+                    key: key,
+                    oldValue: oldV,
+                    newValue: null,
+                    url: document.location.href
+                });
+            }
+        };
         this.local.getAllKeys = () => {return this.getAllKeys(localStorage)};
         this.local.clear = () => {localStorage.clear()};
 
@@ -153,22 +176,24 @@ export class WizardStorageService {
             if (expires) {
                 willExpires = "; max-age=" + (expires*3600000);
             }
+            const oldV = this.cookies.getItem(key);
+            let zVal = value;
+            if (typeof value === 'object'){
+                zVal = JSON.stringify(value);
+            }
+            document.cookie = encodeURIComponent(key) + "=" +
+                              encodeURIComponent(zVal) +
+                              willExpires + (domain ? "; domain=" + domain : "") +
+                              (path ? "; path=" + path : "") +
+                              (isSecure ? "; secure" : "");
             if (this.subjects.cookies[key]) {
                 this.subjects.cookies[key].next({
                     key: key,
-                    oldValue: this.cookies.getItem(key),
+                    oldValue: oldV,
                     newValue: value,
                     url: document.location.href
                 });
             }
-            if (typeof value === 'object'){
-                value = JSON.stringify(value);
-            }
-            document.cookie = encodeURIComponent(key) + "=" +
-                              encodeURIComponent(value) +
-                              willExpires + (domain ? "; domain=" + domain : "") +
-                              (path ? "; path=" + path : "") +
-                              (isSecure ? "; secure" : "");
             return true;
         };
         this.cookies.getItem = (key: string) => {
@@ -187,25 +212,35 @@ export class WizardStorageService {
             if (!key || !this.cookies.hasItem(key)) {
                 return false;
             }
-            if (this.subjects.cookies[key]) {
-                this.subjects.cookies[key].next({
-                    key: key,
-                    oldValue: this.cookies.getItem(key),
-                    newValue: null,
-                    url: document.location.href
-                });
-            }
+            const oldV = this.subjects.cookies[key] ? this.cookies.getItem(key): undefined;
             document.cookie = encodeURIComponent(key) +
                             "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" +
                             ( domain ? "; domain=" + domain : "") +
                             ( path ? "; path=" + path : "");
+            if (this.subjects.cookies[key]) {
+                this.subjects.cookies[key].next({
+                    key: key,
+                    oldValue: oldV,
+                    newValue: null,
+                    url: document.location.href
+                });
+            }
             return true;
         };
         this.cookies.getAllKeys = () => {
             var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
-            for (var nIdx = 0; nIdx < aKeys.length; nIdx++) { aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]); }
+            for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
+                aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]);
+            }
             return aKeys;
         };
+        this.cookies.clear = () => {
+            this.cookies.getAllKeys().map(
+                (item: string) => {
+                    this.cookies.removeItem(item);
+                }
+            );
+        }
     }
 
     toJson(value: any) {

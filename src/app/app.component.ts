@@ -21,13 +21,13 @@ export class AppComponent {
       (success) => {
         if (success) {
           this.logger.push({message: "key 'cookie 1' changed: ", value: success });
+          this.logger.push({message: "'cookie 1' value is: ", value: this.storage.cookies.getItem('cookie 1')});
+          this.logger.push({message: "all keys are: ", value: this.storage.cookies.getAllKeys()});
+          this.storage.cookies.clear();
         }
       }
     );
     this.storage.cookies.setItem("cookie 1", {v: 3, k: 'uyu'});
-
-    this.logger.push({message: "'cookie 1' value is: ", value: this.storage.cookies.getItem('cookie 1')});
-    this.logger.push({message: "all keys are: ", value: this.storage.cookies.getAllKeys()});
 
     this.logger.push({message: "==== SESSION STORAGE ===="});
 
