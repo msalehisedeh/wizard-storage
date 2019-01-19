@@ -6,6 +6,7 @@ You can use this wizard to listen to changing of a specific key you have stored 
 
 **I appreciate comments and ideas to make this tool versatile.**
 
+**NOTE:** Starting with version 1.2.3 all previous versions are deprecated and you need to import this library through @sedeh/wizard-storage. Future bug fixes / enhancements will be on @sedeh scope.
 
 [Live Demo](https://wizard-storage.stackblitz.io) | [Source code](https://github.com/msalehisedeh/wizard-storage/tree/master/src/app) | [Comments/Requests](https://github.com/msalehisedeh/wizard-storage/issues)
 
@@ -126,6 +127,7 @@ storage.cookies.clear()
 ## Releases
 | Version      |Description                                                           |
 |--------------|----------------------------------------------------------------------|
+|version 1.2.3 |Fix dependencies.                                                     |
 |version 1.2.2 |Documentation update. Also noticed i was issuing onchange too early.  |
 |version 1.2.1 |Documentation update.                                                 |
 |version 1.2.0 | **Added cookies API to make this tool a bit sweeter ;-).** When listening to localStorage event raised by other applications, the event has url attribute and contains detailed information about an entry exactly as it was added into the storage. Modified code to pass url attribute and detailed value to the onchange observer.                                                                             |
