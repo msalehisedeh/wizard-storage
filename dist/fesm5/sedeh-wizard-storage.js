@@ -1,11 +1,8 @@
+import { __decorate } from 'tslib';
+import { ɵɵdefineInjectable, Injectable, EventEmitter, HostListener, Output, Directive, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Injectable, Directive, Output, HostListener, EventEmitter, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
 var WizardStorageService = /** @class */ (function () {
     function WizardStorageService() {
         var _this = this;
@@ -23,7 +20,6 @@ var WizardStorageService = /** @class */ (function () {
         this.session.getItem = function (key, version) { return _this.getItem('session', key, version); };
         this.session.hasItem = function (key) { return sessionStorage.getItem(key) !== null; };
         this.session.removeItem = function (key) {
-            /** @type {?} */
             var oldV = _this.subjects.session[key] ? _this.session.getItem(key) : undefined;
             sessionStorage.removeItem(key);
             if (_this.subjects.session[key]) {
@@ -46,7 +42,6 @@ var WizardStorageService = /** @class */ (function () {
         this.local.getItem = function (key, version) { return _this.getItem('local', key, version); };
         this.local.hasItem = function (key) { return localStorage.getItem(key) !== null; };
         this.local.removeItem = function (key) {
-            /** @type {?} */
             var oldV = _this.subjects.local[key] ? _this.local.getItem(key) : undefined;
             localStorage.removeItem(key);
             if (_this.subjects.local[key]) {
@@ -67,14 +62,11 @@ var WizardStorageService = /** @class */ (function () {
             if (!key || /^(?:expires|max\-age|path|domain|secure)$/i.test(key)) {
                 return false;
             }
-            /** @type {?} */
             var willExpires = "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
             if (expires) {
                 willExpires = "; max-age=" + (expires * 3600000);
             }
-            /** @type {?} */
             var oldV = _this.cookies.getItem(key);
-            /** @type {?} */
             var zVal = value;
             if (typeof value === 'object') {
                 zVal = JSON.stringify(value);
@@ -95,7 +87,6 @@ var WizardStorageService = /** @class */ (function () {
             return true;
         };
         this.cookies.getItem = function (key) {
-            /** @type {?} */
             var result = decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" +
                 encodeURIComponent(key).replace(/[\-\.\+\*]/g, "\\$&") +
                 "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
@@ -108,7 +99,6 @@ var WizardStorageService = /** @class */ (function () {
             if (!key || !_this.cookies.hasItem(key)) {
                 return false;
             }
-            /** @type {?} */
             var oldV = _this.subjects.cookies[key] ? _this.cookies.getItem(key) : undefined;
             document.cookie = encodeURIComponent(key) +
                 "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" +
@@ -125,7 +115,6 @@ var WizardStorageService = /** @class */ (function () {
             return true;
         };
         this.cookies.getAllKeys = function () {
-            /** @type {?} */
             var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
             for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
                 aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]);
@@ -138,17 +127,8 @@ var WizardStorageService = /** @class */ (function () {
             });
         };
     }
-    /**
-     * @param {?} storage
-     * @return {?}
-     */
-    WizardStorageService.prototype.isSupported = /**
-     * @param {?} storage
-     * @return {?}
-     */
-    function (storage) {
+    WizardStorageService.prototype.isSupported = function (storage) {
         try {
-            /** @type {?} */
             var itemBackup = storage.getItem('');
             storage.removeItem('');
             storage.setItem('', itemBackup);
@@ -164,37 +144,28 @@ var WizardStorageService = /** @class */ (function () {
             return false;
         }
     };
-    /**
-     * @param {?} store
-     * @param {?} key
-     * @param {?=} version
-     * @return {?}
-     */
-    WizardStorageService.prototype.getItem = /**
-     * @param {?} store
-     * @param {?} key
-     * @param {?=} version
-     * @return {?}
-     */
-    function (store, key, version) {
-        /** @type {?} */
-        var storage = store === 'session' ? sessionStorage : localStorage;
-        /** @type {?} */
-        var item = storage.getItem(key);
-        /** @type {?} */
-        var content = {};
-        /** @type {?} */
+    WizardStorageService.prototype.getStorageItem = function (storage, key) {
         var result;
-        if (item) {
-            try {
-                content = JSON.parse(item);
+        try {
+            result = storage.getItem(key);
+            result = result ? JSON.parse(result) : { data: result };
+            if (result && result.data) {
+                result.data = JSON.parse(result.data);
             }
-            catch (e) {
-                content = {
-                    data: item
+        }
+        catch (e) {
+            if (result && !result.data) {
+                result = {
+                    data: result
                 };
             }
         }
+        return result;
+    };
+    WizardStorageService.prototype.getItem = function (store, key, version) {
+        var storage = store === 'session' ? sessionStorage : localStorage;
+        var content = this.getStorageItem(storage, key);
+        var result;
         if (version && content.version) {
             if (version == content.version) {
                 result = content.data;
@@ -222,90 +193,48 @@ var WizardStorageService = /** @class */ (function () {
         }
         return result;
     };
-    /**
-     * @param {?} store
-     * @param {?} key
-     * @param {?} value
-     * @param {?=} version
-     * @param {?=} expires
-     * @return {?}
-     */
-    WizardStorageService.prototype.setItem = /**
-     * @param {?} store
-     * @param {?} key
-     * @param {?} value
-     * @param {?=} version
-     * @param {?=} expires
-     * @return {?}
-     */
-    function (store, key, value, version, expires) {
-        /** @type {?} */
+    WizardStorageService.prototype.setItem = function (store, key, value, version, expires) {
         var storage = store === 'session' ? sessionStorage : localStorage;
-        /** @type {?} */
         var content = { data: value };
         if (version) {
             content.version = version;
         }
         if (expires != undefined) {
-            /** @type {?} */
             var d = new Date();
             d.setTime(d.getTime() + (expires * 3600000));
             content.expires = d.getTime();
         }
-        /** @type {?} */
         var oldV = storage.getItem(key);
-        storage.setItem(key, JSON.stringify(content));
-        if (this.subjects[store][key]) {
-            this.subjects[store][key].next({
-                key: key,
-                oldValue: oldV,
-                newValue: content,
-                url: document.location.href
-            });
+        try {
+            storage.setItem(key, JSON.stringify(content));
+            if (this.subjects[store][key]) {
+                this.subjects[store][key].next({
+                    key: key,
+                    oldValue: oldV,
+                    newValue: content,
+                    url: document.location.href
+                });
+            }
         }
+        catch (e) { }
     };
-    /**
-     * @param {?} storage
-     * @return {?}
-     */
-    WizardStorageService.prototype.getAllKeys = /**
-     * @param {?} storage
-     * @return {?}
-     */
-    function (storage) {
-        /** @type {?} */
+    WizardStorageService.prototype.getAllKeys = function (storage) {
         var result = [];
-        for (var i = 0; i < storage.length; i++) {
-            result.push(storage.key(i));
+        try {
+            for (var i = 0; i < storage.length; i++) {
+                result.push(storage.key(i));
+            }
         }
+        catch (e) { }
         return result;
     };
-    /**
-     * @param {?} key
-     * @param {?} storage
-     * @return {?}
-     */
-    WizardStorageService.prototype.onChange = /**
-     * @param {?} key
-     * @param {?} storage
-     * @return {?}
-     */
-    function (key, storage) {
+    WizardStorageService.prototype.onChange = function (key, storage) {
         if (!this.subjects[storage][key]) {
             this.subjects[storage][key] = new BehaviorSubject(null);
         }
         return this.subjects[storage][key];
     };
-    /**
-     * @param {?} value
-     * @return {?}
-     */
-    WizardStorageService.prototype.toJson = /**
-     * @param {?} value
-     * @return {?}
-     */
-    function (value) {
-        /** @type {?} */
+    WizardStorageService.prototype.toJson = function (value) {
         var x = value;
         try {
             x = JSON.parse(value);
@@ -313,18 +242,15 @@ var WizardStorageService = /** @class */ (function () {
         catch (e) { }
         return x;
     };
-    WizardStorageService.decorators = [
-        { type: Injectable }
-    ];
-    /** @nocollapse */
-    WizardStorageService.ctorParameters = function () { return []; };
+    WizardStorageService.ngInjectableDef = ɵɵdefineInjectable({ factory: function WizardStorageService_Factory() { return new WizardStorageService(); }, token: WizardStorageService, providedIn: "root" });
+    WizardStorageService = __decorate([
+        Injectable({
+            providedIn: 'root'
+        })
+    ], WizardStorageService);
     return WizardStorageService;
 }());
 
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
 var WizardStorageDirective = /** @class */ (function () {
     function WizardStorageDirective(wizardService) {
         this.wizardService = wizardService;
@@ -332,15 +258,7 @@ var WizardStorageDirective = /** @class */ (function () {
     }
     // Will listen to localStorage changes made
     // by other applications.
-    /**
-     * @param {?} event
-     * @return {?}
-     */
-    WizardStorageDirective.prototype.onHover = /**
-     * @param {?} event
-     * @return {?}
-     */
-    function (event) {
+    WizardStorageDirective.prototype.onHover = function (event) {
         this.wizardStorage.emit({
             key: event.key,
             oldValue: this.wizardService.toJson(event.oldValue),
@@ -348,59 +266,59 @@ var WizardStorageDirective = /** @class */ (function () {
             url: event.url
         });
     };
-    WizardStorageDirective.decorators = [
-        { type: Directive, args: [{
-                    selector: '[wizardStorage]'
-                },] }
-    ];
-    /** @nocollapse */
     WizardStorageDirective.ctorParameters = function () { return [
         { type: WizardStorageService }
     ]; };
-    WizardStorageDirective.propDecorators = {
-        onHover: [{ type: HostListener, args: ['window:storage', ['$event'],] }],
-        wizardStorage: [{ type: Output }]
-    };
+    __decorate([
+        HostListener('window:storage', ['$event'])
+    ], WizardStorageDirective.prototype, "onHover", null);
+    __decorate([
+        Output()
+    ], WizardStorageDirective.prototype, "wizardStorage", void 0);
+    WizardStorageDirective = __decorate([
+        Directive({
+            selector: '[wizardStorage]'
+        })
+    ], WizardStorageDirective);
     return WizardStorageDirective;
 }());
 
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
 var WizardStorageModule = /** @class */ (function () {
     function WizardStorageModule() {
     }
-    WizardStorageModule.decorators = [
-        { type: NgModule, args: [{
-                    declarations: [
-                        WizardStorageDirective
-                    ],
-                    exports: [
-                        WizardStorageDirective
-                    ],
-                    imports: [
-                        CommonModule
-                    ],
-                    providers: [
-                        WizardStorageService
-                    ],
-                    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-                },] }
-    ];
+    WizardStorageModule_1 = WizardStorageModule;
+    WizardStorageModule.forRoot = function () {
+        return {
+            ngModule: WizardStorageModule_1,
+            providers: [
+                WizardStorageService
+            ]
+        };
+    };
+    var WizardStorageModule_1;
+    WizardStorageModule = WizardStorageModule_1 = __decorate([
+        NgModule({
+            declarations: [
+                WizardStorageDirective
+            ],
+            exports: [
+                WizardStorageDirective
+            ],
+            imports: [
+                CommonModule
+            ],
+            providers: [
+                WizardStorageService
+            ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        })
+    ], WizardStorageModule);
     return WizardStorageModule;
 }());
 
 /**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * Generated bundle index. Do not edit.
  */
 
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
-
-export { WizardStorageService, WizardStorageDirective, WizardStorageModule };
-
+export { WizardStorageDirective, WizardStorageModule, WizardStorageService };
 //# sourceMappingURL=sedeh-wizard-storage.js.map

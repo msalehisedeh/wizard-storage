@@ -9,7 +9,9 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class WizardStorageService {
 
     public local: any;
@@ -38,21 +40,27 @@ export class WizardStorageService {
             return false;
         }
     }
-    private getItem(store: string, key: string, version?: string) {
-        const storage: any = store === 'session' ? sessionStorage : localStorage
-        const item = storage.getItem(key);
-        let content: any = {};
+    private getStorageItem(storage: any, key: string) {
         let result: any;
-
-        if (item) {
-            try {
-                content = JSON.parse(item);
-            } catch (e) {
-                content = {
-                    data: item
+        try {
+            result = storage.getItem(key);
+            result = result ? JSON.parse(result): {data: result};
+            if (result && result.data) {
+                result.data = JSON.parse(result.data);
+            }
+        } catch(e) {
+            if (result && !result.data) {
+                result = {
+                    data: result
                 };
             }
         }
+        return result;
+    }
+    private getItem(store: string, key: string, version?: string) {
+        const storage: any = store === 'session' ? sessionStorage : localStorage
+        let content: any = this.getStorageItem(storage, key);
+        let result: any;
 
         if (version && content.version) {
             if (version == content.version) {
@@ -92,21 +100,25 @@ export class WizardStorageService {
             content.expires = d.getTime();
         }
         const oldV = storage.getItem(key);
-        storage.setItem(key, JSON.stringify(content));
-        if (this.subjects[store][key]) {
-            this.subjects[store][key].next({
-                key: key,
-                oldValue: oldV,
-                newValue: content,
-                url: document.location.href
-            });
-        }
+        try {
+            storage.setItem(key, JSON.stringify(content));
+            if (this.subjects[store][key]) {
+                this.subjects[store][key].next({
+                    key: key,
+                    oldValue: oldV,
+                    newValue: content,
+                    url: document.location.href
+                });
+            }
+        } catch(e){}
     }
     private getAllKeys(storage: any) {
         const result = [];
-        for(let i = 0; i < storage.length; i++) {
-            result.push(storage.key( i ));
-        }
+        try {
+            for(let i = 0; i < storage.length; i++) {
+                result.push(storage.key( i ));
+            }
+        } catch(e){}
         return result;
     }
     private onChange(key: string, storage: string) {

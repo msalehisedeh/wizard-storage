@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, ModuleWithProviders, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WizardStorageService } from './wizard-storage.service';
@@ -19,4 +19,13 @@ import { WizardStorageDirective } from './wizard-storage.directive';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class WizardStorageModule { }
+export class WizardStorageModule { 
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: WizardStorageModule,
+      providers: [
+        WizardStorageService
+      ]
+    }
+  }
+}

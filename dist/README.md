@@ -125,16 +125,19 @@ storage.cookies.clear()
 ```
 
 ## Releases
-| Version      |Description                                                           |
-|--------------|----------------------------------------------------------------------|
-|version 1.2.3 |Fix dependencies.                                                     |
-|version 1.2.2 |Documentation update. Also noticed i was issuing onchange too early.  |
-|version 1.2.1 |Documentation update.                                                 |
-|version 1.2.0 | **Added cookies API to make this tool a bit sweeter ;-).** When listening to localStorage event raised by other applications, the event has url attribute and contains detailed information about an entry exactly as it was added into the storage. Modified code to pass url attribute and detailed value to the onchange observer.                                                                             |
-|version 1.1.,2 |I was getting a compiler error on stackblitz. dropped my node_modules and recompiled. found i had forgotten to export directive. also noticed my local application was having problem when using angular 5 since i am comiling this tool in angular 6.                                           |
-|version 1.1.1 |Documentation update.                                                 |
-|version 1.1.0 |Added WizardStorageDirective.                                         |
-|version 1.0.0 |Initial functionality release.                                        |
+| Version      |Description                                                             |
+|--------------|------------------------------------------------------------------------|
+|version 2.0.0 |Angular 8 upgrade.                                                      |
+|version 1.2.5 |Nullpointer fix.                                                        |
+|version 1.2.4 |Fix logic with getItem which was returning added json item as a string. |
+|version 1.2.3 |Fix dependencies.                                                       |
+|version 1.2.2 |Documentation update. Also noticed i was issuing onchange too early.    |
+|version 1.2.1 |Documentation update.                                                   |
+|version 1.2.0 | **Added cookies API to make this tool a bit sweeter ;-).** When listening to localStorage event raised by other applications, the event has url attribute and contains detailed information about an entry exactly as it was added into the storage. Modified code to pass url attribute and detailed value to the onchange observer. |
+|version 1.1.2 |I was getting a compiler error on stackblitz. dropped my node_modules and recompiled. found i had forgotten to export directive. also noticed my local application was having problem when using angular 5 since i am comiling this tool in angular 6. |
+|version 1.1.1 |Documentation update.                                                   |
+|version 1.1.0 |Added WizardStorageDirective.                                           |
+|version 1.0.0 |Initial functionality release.                                          |
 
 
 

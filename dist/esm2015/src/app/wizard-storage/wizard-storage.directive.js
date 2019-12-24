@@ -1,21 +1,13 @@
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
+import * as tslib_1 from "tslib";
 import { Directive, Output, HostListener, EventEmitter } from '@angular/core';
 import { WizardStorageService } from './wizard-storage.service';
-export class WizardStorageDirective {
-    /**
-     * @param {?} wizardService
-     */
+let WizardStorageDirective = class WizardStorageDirective {
     constructor(wizardService) {
         this.wizardService = wizardService;
         this.wizardStorage = new EventEmitter();
     }
-    /**
-     * @param {?} event
-     * @return {?}
-     */
+    // Will listen to localStorage changes made
+    // by other applications.
     onHover(event) {
         this.wizardStorage.emit({
             key: event.key,
@@ -24,25 +16,20 @@ export class WizardStorageDirective {
             url: event.url
         });
     }
-}
-WizardStorageDirective.decorators = [
-    { type: Directive, args: [{
-                selector: '[wizardStorage]'
-            },] }
-];
-/** @nocollapse */
+};
 WizardStorageDirective.ctorParameters = () => [
     { type: WizardStorageService }
 ];
-WizardStorageDirective.propDecorators = {
-    onHover: [{ type: HostListener, args: ['window:storage', ['$event'],] }],
-    wizardStorage: [{ type: Output }]
-};
-if (false) {
-    /** @type {?} */
-    WizardStorageDirective.prototype.wizardStorage;
-    /** @type {?} */
-    WizardStorageDirective.prototype.wizardService;
-}
-
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoid2l6YXJkLXN0b3JhZ2UuZGlyZWN0aXZlLmpzIiwic291cmNlUm9vdCI6Im5nOi8vQHNlZGVoL3dpemFyZC1zdG9yYWdlLyIsInNvdXJjZXMiOlsic3JjL2FwcC93aXphcmQtc3RvcmFnZS93aXphcmQtc3RvcmFnZS5kaXJlY3RpdmUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7OztBQUFBLE9BQU8sRUFDSCxTQUFTLEVBRVQsTUFBTSxFQUNOLFlBQVksRUFDWixZQUFZLEVBQ2YsTUFBTSxlQUFlLENBQUM7QUFFdkIsT0FBTyxFQUFFLG9CQUFvQixFQUFFLE1BQU0sMEJBQTBCLENBQUM7QUFLaEUsTUFBTTs7OztJQWlCRixZQUNZO1FBQUEsa0JBQWEsR0FBYixhQUFhOzZCQUhVLElBQUksWUFBWSxFQUFFO0tBS3BEOzs7OztJQWZELE9BQU8sQ0FBQyxLQUFVO1FBQ2QsSUFBSSxDQUFDLGFBQWEsQ0FBQyxJQUFJLENBQUM7WUFDcEIsR0FBRyxFQUFFLEtBQUssQ0FBQyxHQUFHO1lBQ2QsUUFBUSxFQUFFLElBQUksQ0FBQyxhQUFhLENBQUMsTUFBTSxDQUFDLEtBQUssQ0FBQyxRQUFRLENBQUM7WUFDbkQsUUFBUSxFQUFFLElBQUksQ0FBQyxhQUFhLENBQUMsTUFBTSxDQUFDLEtBQUssQ0FBQyxRQUFRLENBQUM7WUFDbkQsR0FBRyxFQUFFLEtBQUssQ0FBQyxHQUFHO1NBQ2pCLENBQUMsQ0FBQztLQUNOOzs7WUFmSixTQUFTLFNBQUM7Z0JBQ1AsUUFBUSxFQUFFLGlCQUFpQjthQUM5Qjs7OztZQUpRLG9CQUFvQjs7O3NCQVN4QixZQUFZLFNBQUMsZ0JBQWdCLEVBQUUsQ0FBQyxRQUFRLENBQUM7NEJBVXpDLE1BQU0iLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge1xyXG4gICAgRGlyZWN0aXZlLFxyXG4gICAgSW5wdXQsXHJcbiAgICBPdXRwdXQsXHJcbiAgICBIb3N0TGlzdGVuZXIsXHJcbiAgICBFdmVudEVtaXR0ZXJcclxufSBmcm9tICdAYW5ndWxhci9jb3JlJztcclxuXHJcbmltcG9ydCB7IFdpemFyZFN0b3JhZ2VTZXJ2aWNlIH0gZnJvbSAnLi93aXphcmQtc3RvcmFnZS5zZXJ2aWNlJztcclxuXHJcbkBEaXJlY3RpdmUoe1xyXG4gICAgc2VsZWN0b3I6ICdbd2l6YXJkU3RvcmFnZV0nXHJcbn0pXHJcbmV4cG9ydCBjbGFzcyBXaXphcmRTdG9yYWdlRGlyZWN0aXZlIHtcclxuXHJcbiAgICAvLyBXaWxsIGxpc3RlbiB0byBsb2NhbFN0b3JhZ2UgY2hhbmdlcyBtYWRlXHJcbiAgICAvLyBieSBvdGhlciBhcHBsaWNhdGlvbnMuXHJcbiAgICBASG9zdExpc3RlbmVyKCd3aW5kb3c6c3RvcmFnZScsIFsnJGV2ZW50J10pXHJcbiAgICBvbkhvdmVyKGV2ZW50OiBhbnkpIHtcclxuICAgICAgICB0aGlzLndpemFyZFN0b3JhZ2UuZW1pdCh7XHJcbiAgICAgICAgICAgIGtleTogZXZlbnQua2V5LFxyXG4gICAgICAgICAgICBvbGRWYWx1ZTogdGhpcy53aXphcmRTZXJ2aWNlLnRvSnNvbihldmVudC5vbGRWYWx1ZSksXHJcbiAgICAgICAgICAgIG5ld1ZhbHVlOiB0aGlzLndpemFyZFNlcnZpY2UudG9Kc29uKGV2ZW50Lm5ld1ZhbHVlKSxcclxuICAgICAgICAgICAgdXJsOiBldmVudC51cmxcclxuICAgICAgICB9KTtcclxuICAgIH1cclxuXHJcbiAgICBAT3V0cHV0KClcclxuICAgIHdpemFyZFN0b3JhZ2U6IEV2ZW50RW1pdHRlcjxhbnk+ID0gbmV3IEV2ZW50RW1pdHRlcigpO1xyXG5cclxuICAgIGNvbnN0cnVjdG9yKFxyXG4gICAgICAgIHByaXZhdGUgd2l6YXJkU2VydmljZTogV2l6YXJkU3RvcmFnZVNlcnZpY2VcclxuICAgICkge1xyXG4gICAgfVxyXG5cclxufSJdfQ==
+tslib_1.__decorate([
+    HostListener('window:storage', ['$event'])
+], WizardStorageDirective.prototype, "onHover", null);
+tslib_1.__decorate([
+    Output()
+], WizardStorageDirective.prototype, "wizardStorage", void 0);
+WizardStorageDirective = tslib_1.__decorate([
+    Directive({
+        selector: '[wizardStorage]'
+    })
+], WizardStorageDirective);
+export { WizardStorageDirective };
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoid2l6YXJkLXN0b3JhZ2UuZGlyZWN0aXZlLmpzIiwic291cmNlUm9vdCI6Im5nOi8vQHNlZGVoL3dpemFyZC1zdG9yYWdlLyIsInNvdXJjZXMiOlsic3JjL2FwcC93aXphcmQtc3RvcmFnZS93aXphcmQtc3RvcmFnZS5kaXJlY3RpdmUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBLE9BQU8sRUFDSCxTQUFTLEVBRVQsTUFBTSxFQUNOLFlBQVksRUFDWixZQUFZLEVBQ2YsTUFBTSxlQUFlLENBQUM7QUFFdkIsT0FBTyxFQUFFLG9CQUFvQixFQUFFLE1BQU0sMEJBQTBCLENBQUM7QUFLaEUsSUFBYSxzQkFBc0IsR0FBbkMsTUFBYSxzQkFBc0I7SUFpQi9CLFlBQ1ksYUFBbUM7UUFBbkMsa0JBQWEsR0FBYixhQUFhLENBQXNCO1FBSC9DLGtCQUFhLEdBQXNCLElBQUksWUFBWSxFQUFFLENBQUM7SUFLdEQsQ0FBQztJQWxCRCwyQ0FBMkM7SUFDM0MseUJBQXlCO0lBRXpCLE9BQU8sQ0FBQyxLQUFVO1FBQ2QsSUFBSSxDQUFDLGFBQWEsQ0FBQyxJQUFJLENBQUM7WUFDcEIsR0FBRyxFQUFFLEtBQUssQ0FBQyxHQUFHO1lBQ2QsUUFBUSxFQUFFLElBQUksQ0FBQyxhQUFhLENBQUMsTUFBTSxDQUFDLEtBQUssQ0FBQyxRQUFRLENBQUM7WUFDbkQsUUFBUSxFQUFFLElBQUksQ0FBQyxhQUFhLENBQUMsTUFBTSxDQUFDLEtBQUssQ0FBQyxRQUFRLENBQUM7WUFDbkQsR0FBRyxFQUFFLEtBQUssQ0FBQyxHQUFHO1NBQ2pCLENBQUMsQ0FBQztJQUNQLENBQUM7Q0FVSixDQUFBOztZQUo4QixvQkFBb0I7O0FBYi9DO0lBREMsWUFBWSxDQUFDLGdCQUFnQixFQUFFLENBQUMsUUFBUSxDQUFDLENBQUM7cURBUTFDO0FBR0Q7SUFEQyxNQUFNLEVBQUU7NkRBQzZDO0FBZjdDLHNCQUFzQjtJQUhsQyxTQUFTLENBQUM7UUFDUCxRQUFRLEVBQUUsaUJBQWlCO0tBQzlCLENBQUM7R0FDVyxzQkFBc0IsQ0FzQmxDO1NBdEJZLHNCQUFzQiIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7XHJcbiAgICBEaXJlY3RpdmUsXHJcbiAgICBJbnB1dCxcclxuICAgIE91dHB1dCxcclxuICAgIEhvc3RMaXN0ZW5lcixcclxuICAgIEV2ZW50RW1pdHRlclxyXG59IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xyXG5cclxuaW1wb3J0IHsgV2l6YXJkU3RvcmFnZVNlcnZpY2UgfSBmcm9tICcuL3dpemFyZC1zdG9yYWdlLnNlcnZpY2UnO1xyXG5cclxuQERpcmVjdGl2ZSh7XHJcbiAgICBzZWxlY3RvcjogJ1t3aXphcmRTdG9yYWdlXSdcclxufSlcclxuZXhwb3J0IGNsYXNzIFdpemFyZFN0b3JhZ2VEaXJlY3RpdmUge1xyXG5cclxuICAgIC8vIFdpbGwgbGlzdGVuIHRvIGxvY2FsU3RvcmFnZSBjaGFuZ2VzIG1hZGVcclxuICAgIC8vIGJ5IG90aGVyIGFwcGxpY2F0aW9ucy5cclxuICAgIEBIb3N0TGlzdGVuZXIoJ3dpbmRvdzpzdG9yYWdlJywgWyckZXZlbnQnXSlcclxuICAgIG9uSG92ZXIoZXZlbnQ6IGFueSkge1xyXG4gICAgICAgIHRoaXMud2l6YXJkU3RvcmFnZS5lbWl0KHtcclxuICAgICAgICAgICAga2V5OiBldmVudC5rZXksXHJcbiAgICAgICAgICAgIG9sZFZhbHVlOiB0aGlzLndpemFyZFNlcnZpY2UudG9Kc29uKGV2ZW50Lm9sZFZhbHVlKSxcclxuICAgICAgICAgICAgbmV3VmFsdWU6IHRoaXMud2l6YXJkU2VydmljZS50b0pzb24oZXZlbnQubmV3VmFsdWUpLFxyXG4gICAgICAgICAgICB1cmw6IGV2ZW50LnVybFxyXG4gICAgICAgIH0pO1xyXG4gICAgfVxyXG5cclxuICAgIEBPdXRwdXQoKVxyXG4gICAgd2l6YXJkU3RvcmFnZTogRXZlbnRFbWl0dGVyPGFueT4gPSBuZXcgRXZlbnRFbWl0dGVyKCk7XHJcblxyXG4gICAgY29uc3RydWN0b3IoXHJcbiAgICAgICAgcHJpdmF0ZSB3aXphcmRTZXJ2aWNlOiBXaXphcmRTdG9yYWdlU2VydmljZVxyXG4gICAgKSB7XHJcbiAgICB9XHJcblxyXG59Il19

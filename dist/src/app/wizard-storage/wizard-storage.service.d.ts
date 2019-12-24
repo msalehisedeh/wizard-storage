@@ -3,11 +3,12 @@ export declare class WizardStorageService {
     session: any;
     cookies: any;
     private subjects;
-    private isSupported(storage);
-    private getItem(store, key, version?);
-    private setItem(store, key, value, version?, expires?);
-    private getAllKeys(storage);
-    private onChange(key, storage);
+    private isSupported;
+    private getStorageItem;
+    private getItem;
+    private setItem;
+    private getAllKeys;
+    private onChange;
     constructor();
     toJson(value: any): any;
 }
