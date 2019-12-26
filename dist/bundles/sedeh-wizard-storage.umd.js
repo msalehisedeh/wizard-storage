@@ -212,10 +212,10 @@
             this.session = new Object();
             this.session.isSupported = function () { return _this.isSupported(sessionStorage); };
             this.session.onchange = function (key) { return _this.onChange(key, 'session'); };
-            this.session.setItem = function (key, value, version, expires) {
-                _this.setItem('session', key, value, version, expires);
+            this.session.setItem = function (key, value, version, expires, isSecure) {
+                _this.setItem('session', key, value, version, expires, isSecure);
             };
-            this.session.getItem = function (key, version) { return _this.getItem('session', key, version); };
+            this.session.getItem = function (key, options) { return _this.getItem('session', key, options); };
             this.session.hasItem = function (key) { return sessionStorage.getItem(key) !== null; };
             this.session.removeItem = function (key) {
                 var oldV = _this.subjects.session[key] ? _this.session.getItem(key) : undefined;
@@ -234,10 +234,10 @@
             this.local = new Object();
             this.local.isSupported = function () { return _this.isSupported(localStorage); };
             this.local.onchange = function (key) { return _this.onChange(key, 'local'); };
-            this.local.setItem = function (key, value, version, expires) {
-                _this.setItem('local', key, value, version, expires);
+            this.local.setItem = function (key, value, version, expires, isSecure) {
+                _this.setItem('local', key, value, version, expires, isSecure);
             };
-            this.local.getItem = function (key, version) { return _this.getItem('local', key, version); };
+            this.local.getItem = function (key, options) { return _this.getItem('local', key, options); };
             this.local.hasItem = function (key) { return localStorage.getItem(key) !== null; };
             this.local.removeItem = function (key) {
                 var oldV = _this.subjects.local[key] ? _this.local.getItem(key) : undefined;
@@ -342,13 +342,34 @@
                 return false;
             }
         };
-        WizardStorageService.prototype.getStorageItem = function (storage, key) {
+        WizardStorageService.prototype.encode = function (value) {
+            var x = JSON.stringify({ data: value });
+            return btoa(encodeURIComponent(x).split('').reverse().join(''));
+        };
+        WizardStorageService.prototype.decode = function (value) {
+            var x = atob(decodeURIComponent(value).split('').reverse().join(''));
+            return JSON.parse(x).data;
+        };
+        WizardStorageService.prototype.getStorageItem = function (storage, key, options) {
             var result;
             try {
                 result = storage.getItem(key);
-                result = result ? JSON.parse(result) : { data: result };
+                if (result) {
+                    result = JSON.parse(result);
+                }
+                else if (options && options.default) {
+                    var value = options.isSecure ? this.encode(options.default) : options.default;
+                    storage.setItem(key, value);
+                    result = { data: options.default };
+                }
+                else {
+                    result = { data: undefined };
+                }
                 if (result && result.data) {
-                    result.data = JSON.parse(result.data);
+                    result.data = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+                    if (options.isSecure && (typeof result.data === 'string')) {
+                        result.data = this.decode(result.data);
+                    }
                 }
             }
             catch (e) {
@@ -360,9 +381,10 @@
             }
             return result;
         };
-        WizardStorageService.prototype.getItem = function (store, key, version) {
+        WizardStorageService.prototype.getItem = function (store, key, options) {
             var storage = store === 'session' ? sessionStorage : localStorage;
-            var content = this.getStorageItem(storage, key);
+            var version = (typeof options === 'string') ? options : (options ? options.version : undefined);
+            var content = this.getStorageItem(storage, key, options);
             var result;
             if (version && content.version) {
                 if (version == content.version) {
@@ -391,9 +413,10 @@
             }
             return result;
         };
-        WizardStorageService.prototype.setItem = function (store, key, value, version, expires) {
+        WizardStorageService.prototype.setItem = function (store, key, value, version, expires, isSecure) {
             var storage = store === 'session' ? sessionStorage : localStorage;
-            var content = { data: value };
+            var coded = isSecure ? this.encode(value) : value;
+            var content = { data: coded };
             if (version) {
                 content.version = version;
             }

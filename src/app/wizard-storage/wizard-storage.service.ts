@@ -40,13 +40,32 @@ export class WizardStorageService {
             return false;
         }
     }
-    private getStorageItem(storage: any, key: string) {
+    private encode(value: string): any {
+        const x = JSON.stringify({data: value});
+        return btoa(encodeURIComponent(x).split('').reverse().join(''));
+    }
+    private decode(value: string): any {
+        const x = atob(decodeURIComponent(value).split('').reverse().join(''));
+        return JSON.parse(x).data;
+    }
+    private getStorageItem(storage: any, key: string, options?: any) {
         let result: any;
         try {
             result = storage.getItem(key);
-            result = result ? JSON.parse(result): {data: result};
+            if (result) {
+                result = JSON.parse(result);
+            } else if (options && options.default) {
+                const value = options.isSecure ? this.encode(options.default) : options.default;
+                storage.setItem(key, value);
+                result = {data: options.default};
+            } else {
+                result = {data: undefined};
+            }
             if (result && result.data) {
-                result.data = JSON.parse(result.data);
+                result.data = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+                if (options.isSecure && (typeof result.data === 'string')) {
+                    result.data = this.decode(result.data);
+                }
             }
         } catch(e) {
             if (result && !result.data) {
@@ -57,9 +76,10 @@ export class WizardStorageService {
         }
         return result;
     }
-    private getItem(store: string, key: string, version?: string) {
+    private getItem(store: string, key: string, options?: any) {
         const storage: any = store === 'session' ? sessionStorage : localStorage
-        let content: any = this.getStorageItem(storage, key);
+        const version = (typeof options === 'string') ? options : (options ? options.version : undefined);
+        let content: any = this.getStorageItem(storage, key, options);
         let result: any;
 
         if (version && content.version) {
@@ -87,9 +107,10 @@ export class WizardStorageService {
         }
         return result;
     }
-    private setItem(store: string, key: string, value: any, version?: string, expires?: number) {
-        const storage: any = store === 'session' ? sessionStorage : localStorage
-        const content: any = {data: value};
+    private setItem(store: string, key: string, value: any, version?: string, expires?: number, isSecure?: boolean) {
+        const storage: any = store === 'session' ? sessionStorage : localStorage;
+        const coded = isSecure ? this.encode(value) : value;
+        const content: any = {data: coded};
 
         if (version) {
             content.version = version;
@@ -133,10 +154,10 @@ export class WizardStorageService {
         this.session = new Object();
         this.session.isSupported = () => {return this.isSupported(sessionStorage)};
         this.session.onchange = (key: string) => {return this.onChange(key, 'session')}
-        this.session.setItem = (key: string, value: any, version?: string, expires?: number) => {
-            this.setItem('session', key, value, version, expires);
+        this.session.setItem = (key: string, value: any, version?: string, expires?: number, isSecure?: boolean) => {
+            this.setItem('session', key, value, version, expires, isSecure);
         };
-        this.session.getItem = (key: string, version?: string) => {return this.getItem('session', key, version)};
+        this.session.getItem = (key: string, options?: any) => {return this.getItem('session', key, options)};
         this.session.hasItem = (key: string) => {return sessionStorage.getItem(key) !== null};
         this.session.removeItem = (key: string) => {
             const oldV = this.subjects.session[key] ? this.session.getItem(key): undefined;
@@ -157,10 +178,10 @@ export class WizardStorageService {
         this.local = new Object();
         this.local.isSupported = () => {return this.isSupported(localStorage)};
         this.local.onchange = (key: string) => {return this.onChange(key, 'local')}
-        this.local.setItem = (key: string, value: any, version?: string, expires?: number) => {
-            this.setItem('local', key, value,version, expires);
+        this.local.setItem = (key: string, value: any, version?: string, expires?: number, isSecure?: boolean) => {
+            this.setItem('local', key, value,version, expires, isSecure);
         };
-        this.local.getItem = (key: string, version?: string) => {return this.getItem('local', key, version)};
+        this.local.getItem = (key: string, options?: any) => {return this.getItem('local', key, options)};
         this.local.hasItem = (key: string) => {return localStorage.getItem(key) !== null};
         this.local.removeItem = (key: string) => {
             const oldV = this.subjects.local[key] ? this.local.getItem(key): undefined;

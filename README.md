@@ -25,7 +25,6 @@ You can use this wizard to listen to changing of a specific key you have stored 
 ```javascript
 constructor(private storage:WizardStorageService){}
 
-
 // return true if storage is supported by the browser
 storage.local.isSupported() 
 storage.session.isSupported() 
@@ -51,12 +50,14 @@ storage.local.setItem(
     value   // value to be stored
     version // optional version number
     expires // optional in hours
+    isSecure // optional should encrypt value: true/false or undefined
 ) 
 storage.session.setItem(
-    key       // key to keep a reference
-    value     // value to be stored
-    version   // optional version number
-    expires   // optional in hours
+    key     // key to keep a reference
+    value   // value to be stored
+    version // optional version number
+    expires // optional in hours
+    isSecure // optional should encrypt value: true/false or undefined
 )
 storage.cookies.setItem(
     key       // key to keep a reference
@@ -69,13 +70,16 @@ storage.cookies.setItem(
 
 // returns the value if not expired 
 // and if matches the version number
+// If options is string, it will be considered as version number to support backward compatibility with previous versions
+// If Obtions is JSON, it will be {version?, default?, isSecure?}
+// If defalut value is supplied, it will be stored when item do not exist.
 storage.local.getItem(
     key     // key to keep a reference
-    version // optional version number
+    options // optional options
 )
 storage.session.getItem(
     key     // key to keep a reference
-    version // optional version number
+    options // optional options
 )
 storage.cookies.getItem(
     key     // key to keep a reference
@@ -125,19 +129,20 @@ storage.cookies.clear()
 ```
 
 ## Releases
-| Version      |Description                                                             |
-|--------------|------------------------------------------------------------------------|
-|version 2.0.0 |Angular 8 upgrade.                                                      |
-|version 1.2.5 |Nullpointer fix.                                                        |
-|version 1.2.4 |Fix logic with getItem which was returning added json item as a string. |
-|version 1.2.3 |Fix dependencies.                                                       |
-|version 1.2.2 |Documentation update. Also noticed i was issuing onchange too early.    |
-|version 1.2.1 |Documentation update.                                                   |
-|version 1.2.0 | **Added cookies API to make this tool a bit sweeter ;-).** When listening to localStorage event raised by other applications, the event has url attribute and contains detailed information about an entry exactly as it was added into the storage. Modified code to pass url attribute and detailed value to the onchange observer. |
-|version 1.1.2 |I was getting a compiler error on stackblitz. dropped my node_modules and recompiled. found i had forgotten to export directive. also noticed my local application was having problem when using angular 5 since i am comiling this tool in angular 6. |
-|version 1.1.1 |Documentation update.                                                   |
-|version 1.1.0 |Added WizardStorageDirective.                                           |
-|version 1.0.0 |Initial functionality release.                                          |
+|Version|Description                                                             |
+|-------|------------------------------------------------------------------------|
+| 2.1.0 |Added ability to get item value with substituded default value if item do not exist in storage. Added ability to encrypt content. |
+| 2.0.0 |Angular 8 upgrade.                                                      |
+| 1.2.5 |Nullpointer fix.                                                        |
+| 1.2.4 |Fix logic with getItem which was returning added json item as a string. |
+| 1.2.3 |Fix dependencies.                                                       |
+| 1.2.2 |Documentation update. Also noticed i was issuing onchange too early.    |
+| 1.2.1 |Documentation update.                                                   |
+| 1.2.0 | **Added cookies API to make this tool a bit sweeter ;-).** When listening to localStorage event raised by other applications, the event has url attribute and contains detailed information about an entry exactly as it was added into the storage. Modified code to pass url attribute and detailed value to the onchange observer. |
+| 1.1.2 |I was getting a compiler error on stackblitz. dropped my node_modules and recompiled. found i had forgotten to export directive. also noticed my local application was having problem when using angular 5 since i am comiling this tool in angular 6. |
+| 1.1.1 |Documentation update.                                                   |
+| 1.1.0 |Added WizardStorageDirective.                                           |
+| 1.0.0 |Initial functionality release.                                          |
 
 
 

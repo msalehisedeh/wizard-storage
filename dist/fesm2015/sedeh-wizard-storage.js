@@ -13,10 +13,10 @@ let WizardStorageService = class WizardStorageService {
         this.session = new Object();
         this.session.isSupported = () => { return this.isSupported(sessionStorage); };
         this.session.onchange = (key) => { return this.onChange(key, 'session'); };
-        this.session.setItem = (key, value, version, expires) => {
-            this.setItem('session', key, value, version, expires);
+        this.session.setItem = (key, value, version, expires, isSecure) => {
+            this.setItem('session', key, value, version, expires, isSecure);
         };
-        this.session.getItem = (key, version) => { return this.getItem('session', key, version); };
+        this.session.getItem = (key, options) => { return this.getItem('session', key, options); };
         this.session.hasItem = (key) => { return sessionStorage.getItem(key) !== null; };
         this.session.removeItem = (key) => {
             const oldV = this.subjects.session[key] ? this.session.getItem(key) : undefined;
@@ -35,10 +35,10 @@ let WizardStorageService = class WizardStorageService {
         this.local = new Object();
         this.local.isSupported = () => { return this.isSupported(localStorage); };
         this.local.onchange = (key) => { return this.onChange(key, 'local'); };
-        this.local.setItem = (key, value, version, expires) => {
-            this.setItem('local', key, value, version, expires);
+        this.local.setItem = (key, value, version, expires, isSecure) => {
+            this.setItem('local', key, value, version, expires, isSecure);
         };
-        this.local.getItem = (key, version) => { return this.getItem('local', key, version); };
+        this.local.getItem = (key, options) => { return this.getItem('local', key, options); };
         this.local.hasItem = (key) => { return localStorage.getItem(key) !== null; };
         this.local.removeItem = (key) => {
             const oldV = this.subjects.local[key] ? this.local.getItem(key) : undefined;
@@ -143,13 +143,34 @@ let WizardStorageService = class WizardStorageService {
             return false;
         }
     }
-    getStorageItem(storage, key) {
+    encode(value) {
+        const x = JSON.stringify({ data: value });
+        return btoa(encodeURIComponent(x).split('').reverse().join(''));
+    }
+    decode(value) {
+        const x = atob(decodeURIComponent(value).split('').reverse().join(''));
+        return JSON.parse(x).data;
+    }
+    getStorageItem(storage, key, options) {
         let result;
         try {
             result = storage.getItem(key);
-            result = result ? JSON.parse(result) : { data: result };
+            if (result) {
+                result = JSON.parse(result);
+            }
+            else if (options && options.default) {
+                const value = options.isSecure ? this.encode(options.default) : options.default;
+                storage.setItem(key, value);
+                result = { data: options.default };
+            }
+            else {
+                result = { data: undefined };
+            }
             if (result && result.data) {
-                result.data = JSON.parse(result.data);
+                result.data = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+                if (options.isSecure && (typeof result.data === 'string')) {
+                    result.data = this.decode(result.data);
+                }
             }
         }
         catch (e) {
@@ -161,9 +182,10 @@ let WizardStorageService = class WizardStorageService {
         }
         return result;
     }
-    getItem(store, key, version) {
+    getItem(store, key, options) {
         const storage = store === 'session' ? sessionStorage : localStorage;
-        let content = this.getStorageItem(storage, key);
+        const version = (typeof options === 'string') ? options : (options ? options.version : undefined);
+        let content = this.getStorageItem(storage, key, options);
         let result;
         if (version && content.version) {
             if (version == content.version) {
@@ -192,9 +214,10 @@ let WizardStorageService = class WizardStorageService {
         }
         return result;
     }
-    setItem(store, key, value, version, expires) {
+    setItem(store, key, value, version, expires, isSecure) {
         const storage = store === 'session' ? sessionStorage : localStorage;
-        const content = { data: value };
+        const coded = isSecure ? this.encode(value) : value;
+        const content = { data: coded };
         if (version) {
             content.version = version;
         }

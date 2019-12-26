@@ -4,7 +4,7 @@ import { WizardStorageService } from './wizard-storage/wizard-storage.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'Smart Storage';
@@ -17,6 +17,7 @@ export class AppComponent {
     this.logger.push({message: "==== COOKIES STORAGE ===="});
     this.logger.push({message: "'cookie 1' removed: ", value: this.storage.cookies.removeItem("cookie 1")});
     this.logger.push({message: "'cookie 1' removed: ", value: this.storage.cookies.removeItem("cookie 1")});
+
     this.storage.cookies.onchange('cookie 1').subscribe(
       (success) => {
         if (success) {
@@ -34,6 +35,12 @@ export class AppComponent {
     this.storage.session.setItem("oneHourExpire", 5467, '12.4.3', 1);
     this.storage.session.setItem("neverExpire", {v: 3, k: 'uyu'}, '12.4.3');
     this.storage.session.setItem("expireImmediately", 'dfgdfg dgd gg', '12.4.3', 0);
+
+    this.logger.push({
+      message: "defaultItem: ",
+      value: this.storage.session.getItem("defaultItem", {isSecure: true, default: {min: 1, max: 10}})
+    });
+    this.storage.session.removeItem("defaultItem");
 
     this.logger.push({message: "all keys are: ", value: this.storage.session.getAllKeys()});
     this.logger.push({message: "oneHourExpire value for any version is: ", value: this.storage.session.getItem('oneHourExpire')});

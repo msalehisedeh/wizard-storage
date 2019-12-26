@@ -4,6 +4,8 @@ export declare class WizardStorageService {
     cookies: any;
     private subjects;
     private isSupported;
+    private encode;
+    private decode;
     private getStorageItem;
     private getItem;
     private setItem;
