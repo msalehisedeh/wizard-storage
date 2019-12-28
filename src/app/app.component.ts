@@ -36,9 +36,14 @@ export class AppComponent {
     this.storage.session.setItem("neverExpire", {v: 3, k: 'uyu'}, '12.4.3');
     this.storage.session.setItem("expireImmediately", 'dfgdfg dgd gg', '12.4.3', 0);
 
+    const defaultItem = this.storage.session.getItem("defaultItem", {isSecure: true, default: {min: 1, max: 10}});
     this.logger.push({
       message: "defaultItem: ",
-      value: this.storage.session.getItem("defaultItem", {isSecure: true, default: {min: 1, max: 10}})
+      value: defaultItem
+    });
+    this.logger.push({
+      message: "defaultItem2: ",
+      value: this.storage.session.getItem("defaultItem",{isSecure: true})
     });
     this.storage.session.removeItem("defaultItem");
 

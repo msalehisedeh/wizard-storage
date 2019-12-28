@@ -131,6 +131,7 @@ storage.cookies.clear()
 ## Releases
 |Version|Description                                                             |
 |-------|------------------------------------------------------------------------|
+| 2.1.1 |fixed logic in retreiving stored default and stored secure contents.    |
 | 2.1.0 |Added ability to get item value with substituded default value if item do not exist in storage. Added ability to encrypt content. |
 | 2.0.0 |Angular 8 upgrade.                                                      |
 | 1.2.5 |Nullpointer fix.                                                        |

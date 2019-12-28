@@ -343,12 +343,12 @@
             }
         };
         WizardStorageService.prototype.encode = function (value) {
-            var x = JSON.stringify({ data: value });
+            var x = JSON.stringify({ secured: value });
             return btoa(encodeURIComponent(x).split('').reverse().join(''));
         };
         WizardStorageService.prototype.decode = function (value) {
-            var x = atob(decodeURIComponent(value).split('').reverse().join(''));
-            return JSON.parse(x).data;
+            var x = decodeURIComponent(atob(value).split('').reverse().join(''));
+            return JSON.parse(x).secured;
         };
         WizardStorageService.prototype.getStorageItem = function (storage, key, options) {
             var result;
@@ -356,20 +356,15 @@
                 result = storage.getItem(key);
                 if (result) {
                     result = JSON.parse(result);
+                    result.data = options.isSecure ? this.decode(result.data) : result.data;
                 }
                 else if (options && options.default) {
                     var value = options.isSecure ? this.encode(options.default) : options.default;
-                    storage.setItem(key, value);
+                    storage.setItem(key, JSON.stringify({ data: value }));
                     result = { data: options.default };
                 }
                 else {
                     result = { data: undefined };
-                }
-                if (result && result.data) {
-                    result.data = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
-                    if (options.isSecure && (typeof result.data === 'string')) {
-                        result.data = this.decode(result.data);
-                    }
                 }
             }
             catch (e) {

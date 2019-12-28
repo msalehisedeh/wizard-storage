@@ -144,12 +144,12 @@ let WizardStorageService = class WizardStorageService {
         }
     }
     encode(value) {
-        const x = JSON.stringify({ data: value });
+        const x = JSON.stringify({ secured: value });
         return btoa(encodeURIComponent(x).split('').reverse().join(''));
     }
     decode(value) {
-        const x = atob(decodeURIComponent(value).split('').reverse().join(''));
-        return JSON.parse(x).data;
+        const x = decodeURIComponent(atob(value).split('').reverse().join(''));
+        return JSON.parse(x).secured;
     }
     getStorageItem(storage, key, options) {
         let result;
@@ -157,20 +157,15 @@ let WizardStorageService = class WizardStorageService {
             result = storage.getItem(key);
             if (result) {
                 result = JSON.parse(result);
+                result.data = options.isSecure ? this.decode(result.data) : result.data;
             }
             else if (options && options.default) {
                 const value = options.isSecure ? this.encode(options.default) : options.default;
-                storage.setItem(key, value);
+                storage.setItem(key, JSON.stringify({ data: value }));
                 result = { data: options.default };
             }
             else {
                 result = { data: undefined };
-            }
-            if (result && result.data) {
-                result.data = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
-                if (options.isSecure && (typeof result.data === 'string')) {
-                    result.data = this.decode(result.data);
-                }
             }
         }
         catch (e) {
