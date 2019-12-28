@@ -2,7 +2,7 @@
 
 Have you ever been in need of using localStorage or sessionStorage in a more intelligent way? Have you thought of having an expiring storage data or a data tied up with a version number? This wizard allows you to just do that.
 
-You can use this wizard to listen to changing of a specific key you have stored in storage. You can set a version number on a key and get the value only if correct version is supplied when retrieving data. Or set a time to expire the key in x number of hours. You can also listen to storage value changes made by other applications by using the WizardStorageDirective. 
+You can use this wizard to listen to changing of a specific key you have stored in storage. You can set a version number on a key and get the value only if correct version is supplied when retrieving data. Or set a time to expire the key in x number of hours. You can also listen to storage value changes made by other applications by using the WizardStorageDirective. You can have the wizard set default values for your keys or have the values encrypted for added security.
 
 **I appreciate comments and ideas to make this tool versatile.**
 
@@ -131,7 +131,8 @@ storage.cookies.clear()
 ## Releases
 |Version|Description                                                             |
 |-------|------------------------------------------------------------------------|
-| 2.1.1 |fixed logic in retreiving stored default and stored secure contents.    |
+| 2.1.2 |Somehow stacblitz is not able to find version 2.1.1. Re-packaging in hope the problem will go away.|
+| 2.1.1 |Fixed logic in retreiving stored default and stored secure contents.    |
 | 2.1.0 |Added ability to get item value with substituded default value if item do not exist in storage. Added ability to encrypt content. |
 | 2.0.0 |Angular 8 upgrade.                                                      |
 | 1.2.5 |Nullpointer fix.                                                        |
