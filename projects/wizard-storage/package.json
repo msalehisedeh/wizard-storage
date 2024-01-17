@@ -1,0 +1,24 @@
+{
+  "name": "@sedeh/wizard-storage",
+  "version": "3.0.0",
+  "peerDependencies": {
+    "@angular/common": "^15.2.0",
+    "@angular/core": "^15.2.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "keywords": [
+    "angular 6+",
+    "webStorage",
+    "web storage",
+    "smart storage",
+    "cookies",
+    "cookies storage",
+    "localStorage",
+    "local storage",
+    "session storage",
+    "sessionStorage"
+  ],
+  "sideEffects": false
+}

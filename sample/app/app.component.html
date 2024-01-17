@@ -1,0 +1,25 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center">
+  <h1>
+    Welcome to {{ title }}!
+  </h1>
+</div>
+<div class="resources">
+  <a href="https://www.npmjs.com/package/@sedeh/wizard-storage"
+    >npm install &#64;sedeh/into-pipes</a
+  >
+  <p>Tested On Safari, Chrome, Mozilla, and IE11 browsers.</p>
+</div>
+
+<div class="action">
+    <p>Run two instances of this example. click on "Trigger Storage" button 
+        of one instance and see the result on the second instance</p>
+    <button (click)="makeStorage()">Trigger Storage</button>
+    <button (click)="logger = []">Clear Logger</button>
+</div>
+<div class="logger" (wizardStorage)="storageChanged($event)">
+  <ul>
+    <li *ngFor="let t of logger"><span [innerHTML]="t.message"></span><span class="json" [innerHTML]="t.value | json"></span></li>
+  </ul>
+</div>
+
