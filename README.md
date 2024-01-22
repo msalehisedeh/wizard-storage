@@ -8,9 +8,8 @@ You can use this wizard to listen to changing of a specific key you have stored 
 
 **NOTE:** Starting with version 1.2.3 all previous versions are deprecated and you need to import this library through @sedeh/wizard-storage. Future bug fixes / enhancements will be on @sedeh scope.
 
-[Live Demo](https://wizard-storage.stackblitz.io) | 
+[Live Demo](https://stackblitz.com/edit/wizard-storage?file=src%2Fapp%2Fapp.component.ts) | 
 [NPM](https://www.npmjs.com/package/@sedeh/wizard-storage) | 
-[Source code](https://github.com/msalehisedeh/wizard-storage/tree/master/src/app) | 
 [Comments/Requests](https://github.com/msalehisedeh/wizard-storage/issues)
 
 
